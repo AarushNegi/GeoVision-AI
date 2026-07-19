@@ -1,16 +1,15 @@
 from fastapi import APIRouter, UploadFile, File
-from PIL import Image
+from backend.app.vision.preprocess import preprocess
 
 router = APIRouter()
 
 
 @router.post("/analyze")
 async def analyze_image(file: UploadFile = File(...)):
-    image = Image.open(file.file)
+    result = preprocess(file.file)
 
     return {
         "filename": file.filename,
-        "width": image.width,
-        "height": image.height,
-        "format": image.format
+        "original_size": result["original_size"],
+        "processed_size": result["processed_size"]
     }
