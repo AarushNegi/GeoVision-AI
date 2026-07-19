@@ -1,14 +1,15 @@
 from fastapi import FastAPI
-
+from backend.app.api.routes import router
 app = FastAPI(
     title="GeoVision AI",
-    version="0.1.0",
-    description="AI-powered image geolocation platform"
+    version="0.1.0"
 )
+
+app.include_router(router)
 
 
 @app.get("/")
 def root():
     return {
-        "message": "Welcome to GeoVision AI 🚀"
+        "message": "GeoVision AI API"
     }
