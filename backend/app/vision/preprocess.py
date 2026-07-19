@@ -1,36 +1,29 @@
 from PIL import Image
-import numpy as np
-
+from torchvision import transforms
 
 TARGET_SIZE = (224, 224)
 
-
-def load_image(file):
-    image = Image.open(file)
-    return image.convert("RGB")
-
-
-def resize_image(image):
-    return image.resize(TARGET_SIZE)
-
-
-def normalize_image(image):
-    image = np.array(image).astype(np.float32)
-    image /= 255.0
-    return image
+transform = transforms.Compose([
+    transforms.Resize(TARGET_SIZE),
+    transforms.ToTensor(),
+    transforms.Normalize(
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
+    )
+])
 
 
 def preprocess(file):
-    image = load_image(file)
+    image = Image.open(file).convert("RGB")
 
     original_size = image.size
 
-    image = resize_image(image)
+    tensor = transform(image)
 
-    processed = normalize_image(image)
+    tensor = tensor.unsqueeze(0)
 
     return {
-        "image": processed,
+        "tensor": tensor,
         "original_size": original_size,
-        "processed_size": processed.shape
+        "processed_size": tensor.shape
     }
